@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>NutriTrack AI - USDA Version</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+            text-align: center;
+            padding: 40px;
+        }
+
+        h1 {
+            margin-bottom: 5px;
+        }
+
+        .card {
+            background: white;
+            color: black;
+            padding: 30px;
+            border-radius: 20px;
+            width: 420px;
+            margin: auto;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+        }
+
+        input {
+            padding: 12px;
+            width: 85%;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+            margin-top: 10px;
+        }
+
+        button {
+            padding: 12px 25px;
+            margin-top: 15px;
+            background: #2a5298;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background: #1e3c72;
+        }
+
+        .result {
+            margin-top: 25px;
+            text-align: left;
+        }
+
+        .status {
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .footer {
+            margin-top: 20px;
+            font-size: 12px;
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>🥗 NutriTrack AI</h1>
+    <p>USDA Scientific Nutrition Database Version</p>
+
+    <div class="card">
+
+        <form action="/predict" method="POST">
+            <input type="text" name="food" placeholder="Masukkan makanan / Enter food name" required>
+            <br>
+            <button type="submit">Analisis Nutrisi / Analyze</button>
+        </form>
+
+        {% if food %}
+        <div class="result">
+            <h3>Hasil Analisis | Analysis Result</h3>
+
+            <p><b>Makanan / Food:</b> {{ food }}</p>
+            <p><b>Kalori / Calories:</b> {{ calories }} kcal (per 100g)</p>
+            <p><b>Protein:</b> {{ protein }} g</p>
+            <p><b>Lemak / Fat:</b> {{ fat }} g</p>
+            <p><b>Karbohidrat / Carbohydrates:</b> {{ carbs }} g</p>
+
+            <p class="status">Status: {{ status }}</p>
+            <p><b>Rekomendasi / Recommendation:</b> {{ recommendation }}</p>
+        </div>
+        {% endif %}
+
+    </div>
+
+    <div class="footer">
+        Data source: USDA FoodData Central
+    </div>
+
+</body>
+</html>
