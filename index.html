@@ -1,62 +1,67 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>NutriTrack AI</title>
 
-  <!-- Teachable Machine Scripts -->
-  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest"></script>
+  <!-- FIXED CDN (NO MORE ERROR) -->
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.10.0/dist/tf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@0.8/dist/teachablemachine-image.min.js"></script>
 
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, #4CAF50, #2E7D32);
-      text-align: center;
-      color: white;
       margin: 0;
-      padding: 40px;
-    }
-
-    h1 {
-      margin-bottom: 10px;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #1e3c72, #2a5298);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      color: white;
     }
 
     .card {
       background: white;
       color: black;
-      padding: 20px;
-      border-radius: 15px;
-      width: 350px;
-      margin: auto;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+      padding: 30px;
+      border-radius: 20px;
+      width: 380px;
+      text-align: center;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    }
+
+    h1 {
+      margin-top: 0;
+      margin-bottom: 10px;
     }
 
     button {
-      background: #4CAF50;
-      border: none;
       padding: 10px 20px;
-      margin: 10px;
+      margin-top: 15px;
+      background: #2a5298;
+      border: none;
       color: white;
-      border-radius: 8px;
+      border-radius: 10px;
       cursor: pointer;
       font-weight: bold;
+      transition: 0.3s;
     }
 
     button:hover {
-      background: #388E3C;
+      background: #1e3c72;
     }
 
     #webcam-container {
-      margin-top: 15px;
+      margin-top: 20px;
     }
 
     canvas {
-      border-radius: 12px;
+      border-radius: 15px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.2);
     }
 
     #label-container {
-      margin-top: 10px;
+      margin-top: 15px;
       font-weight: bold;
     }
   </style>
@@ -64,10 +69,10 @@
 
 <body>
 
-  <h1>🍎 NutriTrack AI</h1>
-  <p>Camera + USDA Nutrition</p>
-
   <div class="card">
+    <h1>🥗 NutriTrack AI</h1>
+    <p>AI Food Detection</p>
+
     <button onclick="init()">Start Camera</button>
 
     <div id="webcam-container"></div>
@@ -75,27 +80,33 @@
   </div>
 
 <script>
-  const URL = "https://teachablemachine.withgoogle.com/models/5ZJniRGuc/";
+  const URL = "https://teachablemachine.withgoogle.com/models/5ZJniRGuc/"; // PASTIKAN INI BENAR
 
   let model, webcam, labelContainer, maxPredictions;
 
   async function init() {
-    const modelURL = URL + "model.json";
-    const metadataURL = URL + "metadata.json";
+    try {
+      const modelURL = URL + "model.json";
+      const metadataURL = URL + "metadata.json";
 
-    model = await tmImage.load(modelURL, metadataURL);
-    maxPredictions = model.getTotalClasses();
+      model = await tmImage.load(modelURL, metadataURL);
+      maxPredictions = model.getTotalClasses();
 
-    webcam = new tmImage.Webcam(300, 300, true);
-    await webcam.setup();
-    await webcam.play();
-    window.requestAnimationFrame(loop);
+      webcam = new tmImage.Webcam(300, 300, true);
+      await webcam.setup();
+      await webcam.play();
+      window.requestAnimationFrame(loop);
 
-    document.getElementById("webcam-container").innerHTML = "";
-    document.getElementById("webcam-container").appendChild(webcam.canvas);
+      document.getElementById("webcam-container").innerHTML = "";
+      document.getElementById("webcam-container").appendChild(webcam.canvas);
 
-    labelContainer = document.getElementById("label-container");
-    labelContainer.innerHTML = "";
+      labelContainer = document.getElementById("label-container");
+      labelContainer.innerHTML = "";
+
+    } catch (error) {
+      alert("Camera error: " + error.message);
+      console.error(error);
+    }
   }
 
   async function loop() {
