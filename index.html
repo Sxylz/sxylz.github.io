@@ -1,96 +1,77 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>NutriTrack AI - USDA + Camera</title>
+    <title>NutriTrack AI - USDA + Camera</title>
 
-<!-- STABLE CDN -->
-<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.10.0/dist/tf.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@0.8/dist/teachablemachine-image.min.js"></script>
+    <!-- Stable CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.10.0/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@0.8/dist/teachablemachine-image.min.js"></script>
 
-<style>
-body {
-    font-family: Arial, sans-serif;
-    background: linear-gradient(135deg, #1e3c72, #2a5298);
-    color: white;
-    text-align: center;
-    padding: 40px;
-}
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+            text-align: center;
+            padding: 40px;
+        }
 
-h1 {
-    margin-bottom: 5px;
-}
+        .card {
+            background: white;
+            color: black;
+            padding: 35px;
+            border-radius: 20px;
+            width: 450px;
+            margin: auto;
+            box-shadow: 0 20px 45px rgba(0,0,0,0.3);
+        }
 
-.card {
-    background: white;
-    color: black;
-    padding: 35px;
-    border-radius: 20px;
-    width: 450px;
-    margin: auto;
-    box-shadow: 0 20px 45px rgba(0,0,0,0.3);
-    transition: 0.3s;
-}
+        input {
+            padding: 12px;
+            width: 85%;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+            margin-top: 10px;
+        }
 
-input {
-    padding: 12px;
-    width: 85%;
-    border-radius: 10px;
-    border: 1px solid #ccc;
-    margin-top: 10px;
-    font-size: 14px;
-}
+        button {
+            padding: 12px 25px;
+            margin-top: 15px;
+            background: #2a5298;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+        }
 
-button {
-    padding: 12px 25px;
-    margin-top: 15px;
-    background: #2a5298;
-    color: white;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: 0.3s;
-}
+        button:hover {
+            background: #1e3c72;
+        }
 
-button:hover {
-    background: #1e3c72;
-    transform: translateY(-2px);
-}
+        .result {
+            margin-top: 25px;
+            text-align: left;
+            background: #f3f6ff;
+            padding: 15px;
+            border-radius: 12px;
+        }
 
-.result {
-    margin-top: 25px;
-    text-align: left;
-    background: #f3f6ff;
-    padding: 15px;
-    border-radius: 12px;
-}
+        #webcam-container {
+            margin-top: 20px;
+        }
 
-.status {
-    font-weight: bold;
-    margin-top: 10px;
-}
+        canvas {
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
 
-#webcam-container {
-    margin-top: 20px;
-}
-
-canvas {
-    border-radius: 15px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-}
-
-#label-container {
-    margin-top: 12px;
-    font-weight: bold;
-    color: #2a5298;
-}
-
-.footer {
-    margin-top: 20px;
-    font-size: 12px;
-    opacity: 0.7;
-}
-</style>
+        #label-container {
+            margin-top: 12px;
+            font-weight: bold;
+            color: #2a5298;
+        }
+    </style>
 </head>
 
 <body>
@@ -100,40 +81,38 @@ canvas {
 
 <div class="card">
 
-<form action="/predict" method="POST">
-    <input type="text" id="foodInput" name="food"
-           placeholder="Masukkan makanan / Enter food name" required>
-    <br>
-    <button type="submit">Analisis Nutrisi</button>
-</form>
+    <form action="/predict" method="POST">
+        <input type="text" id="foodInput" name="food"
+               placeholder="Masukkan makanan / Enter food name" required>
+        <br>
+        <button type="submit">Analisis Nutrisi</button>
+    </form>
 
-<button onclick="init()">Start Camera Detection</button>
+    <button onclick="init()">Start Camera Detection</button>
 
-<div id="webcam-container"></div>
-<div id="label-container"></div>
+    <div id="webcam-container"></div>
+    <div id="label-container"></div>
 
-{% if food %}
-<div class="result">
-    <h3>Hasil Analisis</h3>
-    <p><b>Makanan:</b> {{ food }}</p>
-    <p><b>Kalori:</b> {{ calories }} kcal (per 100g)</p>
-    <p><b>Protein:</b> {{ protein }} g</p>
-    <p><b>Lemak:</b> {{ fat }} g</p>
-    <p><b>Karbohidrat:</b> {{ carbs }} g</p>
-    <p class="status">Status: {{ status }}</p>
-    <p><b>Rekomendasi:</b> {{ recommendation }}</p>
-</div>
-{% endif %}
+    {% if food %}
+    <div class="result">
+        <h3>Hasil Analisis</h3>
+        <p><b>Makanan:</b> {{ food }}</p>
+        <p><b>Kalori:</b> {{ calories }} kcal (per 100g)</p>
+        <p><b>Protein:</b> {{ protein }} g</p>
+        <p><b>Lemak:</b> {{ fat }} g</p>
+        <p><b>Karbohidrat:</b> {{ carbs }} g</p>
+        <p><b>Status:</b> {{ status }}</p>
+        <p><b>Rekomendasi:</b> {{ recommendation }}</p>
+    </div>
+    {% endif %}
 
-</div>
-
-<div class="footer">
-Data source: USDA FoodData Central
 </div>
 
 <script>
 const URL = "https://teachablemachine.withgoogle.com/models/5ZJniRGuc/";
-let model, webcam, labelContainer, submitted = false;
+
+let model, webcam, labelContainer;
+let submitted = false;
 
 async function init() {
     submitted = false;
@@ -179,6 +158,7 @@ async function predict() {
 
     if (highestProb > 0.85 && !submitted) {
         submitted = true;
+
         const input = document.getElementById("foodInput");
         input.value = bestClass;
 
